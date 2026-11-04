@@ -1,416 +1,1151 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Low-Dopamine Protocol: Noir Edition</title>
-<meta name="claude:viewport-fit-sides" content="cover">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>WAYNETECH // Low-Dopamine Protocol: Dark Knight Edition</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
 <style>
-/* Layout: HUD + mission control on top, five protocol modules as glass panels, single deliberate noir black-and-signal-yellow look */
-:root{
-  --bg:#06070a;
-  --bg2:#10141c;
-  --red:#ffc933;
-  --red-hot:#ffe066;
-  --red-deep:#6b5200;
-  --text:#f1f1ec;
-  --muted:#a3abb8;
-  --glass:rgba(255,201,51,.07);
-  --glass-strong:rgba(255,201,51,.13);
-  --line:rgba(255,201,51,.38);
-  --glow:0 0 18px rgba(255,201,51,.45);
-  --cyan:#8fb8ff;
-  --cyan-dim:rgba(143,184,255,.10);
-  --amber:#ff7a59;
-  --rose:#ffe9a8;
-  --font-display:'Chakra Petch','Arial Narrow',sans-serif;
-  --font-head:'Oswald','Arial Narrow',sans-serif;
-  --font-mono:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace;
-  color-scheme:dark;
+/* -------------------------------------------------------------
+   WAYNETECH BATCAVE DESIGN SYSTEM & DESIGN TOKENS
+   ------------------------------------------------------------- */
+:root {
+  --bg: #030406;
+  --bg2: #0a0d14;
+  --gold: #ffcc00;
+  --gold-glow: #ffe680;
+  --gold-dim: rgba(255, 204, 0, 0.12);
+  --text: #eceff4;
+  --muted: #8b949e;
+  --glass: rgba(255, 204, 0, 0.035);
+  --glass-strong: rgba(255, 204, 0, 0.085);
+  --line: rgba(255, 204, 0, 0.3);
+  --glow: 0 0 22px rgba(255, 204, 0, 0.35);
+  --cyan: #58a6ff;
+  --cyan-dim: rgba(88, 166, 255, 0.08);
+  --font-display: 'Chakra Petch', sans-serif;
+  --font-head: 'Oswald', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  color-scheme: dark;
 }
-*{box-sizing:border-box}
-body{
+
+* {
+  box-sizing: border-box;
+}
+
+body {
   background:
-    radial-gradient(900px 500px at 85% -5%,rgba(255,201,51,.22),transparent 60%),
-    radial-gradient(700px 500px at -5% 40%,rgba(70,82,105,.28),transparent 60%),
-    linear-gradient(var(--bg),var(--bg2));
-  background-color:var(--bg);
-  color:var(--text);
-  font-family:var(--font-display);
-  font-size:15px;line-height:1.7;
-  padding-block:28px 56px;
-  padding-left:max(16px,env(safe-area-inset-left,0px));
-  padding-right:max(16px,env(safe-area-inset-right,0px));
-  min-height:100vh;
+    radial-gradient(1000px 600px at 85% -10%, rgba(255, 204, 0, 0.15), transparent 65%),
+    radial-gradient(800px 500px at -10% 30%, rgba(88, 166, 255, 0.12), transparent 65%),
+    linear-gradient(var(--bg), var(--bg2));
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: 15px;
+  line-height: 1.7;
+  padding-block: 32px 64px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  min-height: 100vh;
+  margin: 0;
 }
-body::before{
-  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
-  background-image:linear-gradient(rgba(255,201,51,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,201,51,.05) 1px,transparent 1px);
-  background-size:44px 44px;
-  mask-image:linear-gradient(to bottom,#000,transparent 85%);
+
+/* Tactical Grid Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image: 
+    linear-gradient(rgba(255, 204, 0, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 204, 0, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, #000 10%, transparent 90%);
 }
-.wrap{position:relative;z-index:1;max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
-a{color:var(--red-hot)}
-a:focus-visible,button:focus-visible,.q:focus-within{outline:2px solid var(--red-hot);outline-offset:2px}
 
-/* hero */
-.tag{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--red-hot)}
-h1{font-family:var(--font-display);font-size:clamp(30px,6.2vw,54px);line-height:1.05;margin:6px 0 8px;font-weight:700;text-transform:uppercase;letter-spacing:.02em;text-wrap:balance;text-shadow:0 0 22px rgba(255,201,51,.6)}
-h1 em{font-style:normal;color:var(--red)}
-.lead{max-width:62ch;color:var(--muted);margin:0}
-
-.glass{
-  position:relative;
-  background:linear-gradient(160deg,rgba(255,201,51,.13),rgba(40,48,66,.08) 45%,rgba(10,2,10,.38));
-  border:1px solid var(--line);
-  border-radius:16px;
-  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
-  box-shadow:inset 0 1px 0 rgba(255,225,140,.2),0 0 0 1px rgba(0,0,0,.4),0 14px 48px rgba(0,0,0,.5);
-  padding:clamp(18px,3vw,30px);
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
-.glass::before{content:"";position:absolute;left:20px;right:20px;top:-1px;height:2px;background:linear-gradient(90deg,transparent,var(--red-hot),var(--cyan),transparent);opacity:.85;pointer-events:none}
-section.glass.stack{gap:22px}
-h2{font-family:var(--font-display);font-size:clamp(22px,4vw,30px);margin:0 0 6px;text-transform:uppercase;letter-spacing:.05em;text-wrap:balance;color:var(--text);text-shadow:0 0 18px rgba(255,201,51,.5)}
-h3{font-family:var(--font-display);font-size:15px;margin:0;color:var(--rose);letter-spacing:.06em;text-transform:uppercase}
-.mod-tag{display:inline-block;font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--cyan);border:1px solid rgba(143,184,255,.4);background:var(--cyan-dim);padding:3px 11px;border-radius:99px;text-transform:uppercase;margin-bottom:10px}
-p{margin:0}
-.stack{display:flex;flex-direction:column;gap:14px}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
-.grid3>*{min-width:0}
-.cell{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(0,0,0,.32));border:1px solid rgba(255,201,51,.2);border-top:2px solid var(--red);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:10px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
-.cell p,.cell li{color:#d9dde5}
-.cell b{color:var(--text)}
-ul.tight{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:8px}
-ul.tight li::marker{color:var(--red-hot)}
-ul.tight li.rule{list-style:none;margin-left:-18px;padding:11px 14px;border:1px solid rgba(143,184,255,.25);border-left:3px solid var(--cyan);border-radius:8px;background:var(--cyan-dim);color:var(--text)}
-.note{font-size:13px;color:#ffd5c9;border:1px solid rgba(255,122,89,.35);background:rgba(255,122,89,.07);border-radius:10px;padding:10px 14px}
-.src{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
-.src::before{content:"🆓 FREE SOURCES";width:100%;font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;color:var(--cyan)}
-.src a{display:inline-block;font-size:13px;text-decoration:none;color:var(--cyan);border:1px solid rgba(143,184,255,.4);background:var(--cyan-dim);padding:6px 13px;border-radius:999px;transition:box-shadow .2s,background .2s}
-.src a:hover{box-shadow:0 0 16px rgba(143,184,255,.45);background:rgba(143,184,255,.2)}
 
-/* HUD */
-.hud{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center}
-@media(max-width:520px){.hud{grid-template-columns:1fr}}
-.lvl{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;text-align:center;border:2px solid var(--red);box-shadow:var(--glow),inset 0 0 20px rgba(255,201,51,.3);font-family:var(--font-display);line-height:1}
-.lvl b{font-size:34px;display:block}
-.lvl span{font-size:10px;letter-spacing:.2em;color:var(--muted)}
-.rank{font-family:var(--font-display);font-size:20px;text-transform:uppercase;letter-spacing:.05em}
-.bar{height:14px;border-radius:99px;background:rgba(0,0,0,.5);border:1px solid var(--line);overflow:hidden;margin:8px 0 6px}
-.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red-deep),var(--red),var(--red-hot));box-shadow:0 0 14px var(--red);transition:width .5s}
-.stats{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:12px;color:var(--muted)}
-.stats b{color:var(--text);font-variant-numeric:tabular-nums}
+a {
+  color: var(--gold-glow);
+}
 
-/* quests */
-.quests{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
-.q{display:flex;gap:10px;align-items:flex-start;padding:12px;border:1px solid rgba(255,201,51,.25);border-radius:10px;background:rgba(0,0,0,.28);cursor:pointer;transition:border-color .2s,box-shadow .2s,background .2s;min-width:0}
-.q:hover{border-color:var(--red)}
-.q input{appearance:none;-webkit-appearance:none;flex:none;width:20px;height:20px;margin-top:2px;border:2px solid var(--red);border-radius:5px;background:transparent;cursor:pointer;display:grid;place-items:center}
-.q input:checked{background:var(--red);box-shadow:var(--glow)}
-.q input:checked::after{content:"✓";color:#0a0a0c;font-weight:700;font-size:14px;line-height:1}
-.q.done{background:var(--glass-strong);border-color:var(--red);box-shadow:inset 0 0 18px rgba(255,201,51,.15)}
-.q .xp{margin-left:auto;flex:none;font-size:11px;color:var(--red-hot);border:1px solid var(--line);border-radius:99px;padding:0 8px;height:20px;line-height:18px}
-.q span.t{min-width:0}
-.q small{display:block;color:var(--muted);font-size:12px}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
-.days{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
-@media(max-width:520px){.days{grid-template-columns:repeat(6,1fr)}}
-.d{aspect-ratio:1;max-width:100%;border-radius:7px;border:1px solid rgba(255,201,51,.22);background:rgba(0,0,0,.35);display:grid;place-items:center;font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
-.d.l1{background:rgba(255,201,51,.2);color:var(--text)}
-.d.l2{background:rgba(255,201,51,.5);color:var(--text);border-color:var(--red)}
-.d.l3{background:var(--red);color:#0a0a0c;font-weight:700;box-shadow:var(--glow);border-color:var(--red-hot)}
-.d.today{outline:2px dashed var(--red-hot);outline-offset:1px}
-.legend{display:flex;gap:10px;flex-wrap:wrap;font-size:11px;color:var(--muted);align-items:center}
-.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;border:1px solid var(--line);vertical-align:-2px;margin-right:4px}
-button.ghost{font:inherit;font-size:12px;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
-button.ghost:hover{box-shadow:var(--glow)}
-.boss{border-color:var(--red);box-shadow:var(--glow),inset 0 0 30px rgba(255,201,51,.08)}
-.toast{position:fixed;left:50%;bottom:max(18px,env(safe-area-inset-bottom,0px));transform:translate(-50%,30px);opacity:0;pointer-events:none;background:var(--red);color:#0a0a0c;font-weight:700;padding:10px 18px;border-radius:10px;box-shadow:var(--glow);transition:.3s;z-index:20;max-width:calc(100vw - 32px)}
-.toast.on{opacity:1;transform:translate(-50%,0)}
-nav.chips{display:flex;flex-wrap:wrap;gap:8px}
-nav.chips a{font-size:12px;text-decoration:none;color:var(--text);padding:6px 12px;border:1px solid var(--line);border-radius:99px;background:var(--glass)}
-nav.chips a:hover{box-shadow:var(--glow)}
-@keyframes pulse{0%,100%{text-shadow:0 0 22px rgba(255,201,51,.55)}50%{text-shadow:0 0 34px rgba(255,201,51,.95)}}
-h1{animation:pulse 4s ease-in-out infinite}
-@media(prefers-reduced-motion:reduce){h1{animation:none}.bar i,.toast,.q{transition:none}}
-footer{font-size:12px;color:var(--muted)}
-/* noir overrides */
-h1,h2,.rank,.lvl{font-family:var(--font-head)}
-h1{letter-spacing:.04em}
-header.stack{position:relative;padding-block:6px 4px}
-header.stack>*:not(.sky){position:relative;z-index:1}
-.sky{position:absolute;right:0;top:-18px;width:min(46%,380px);height:calc(100% + 18px);pointer-events:none;opacity:.55;z-index:0}
-.sky svg{width:100%;height:100%;display:block}
-@media(max-width:620px){.sky{opacity:.28;width:70%}}
+a:focus-visible, button:focus-visible, .q:focus-within {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
 
+/* -------------------------------------------------------------
+   HEADER & ANIMATED BAT-SIGNAL SKYLINE
+   ------------------------------------------------------------- */
+header.stack {
+  position: relative;
+  padding-block: 8px 4px;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 204, 0, 0.15);
+  padding-bottom: 24px;
+}
+
+.sky {
+  position: absolute;
+  right: 0;
+  top: -10px;
+  width: min(50%, 420px);
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.85;
+  z-index: 0;
+}
+
+.sky svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(255, 204, 0, 0.3));
+}
+
+/* Dynamic Sweep Animation for Bat-Signal Beam & Logo */
+@keyframes signalSweep {
+  0% { transform: rotate(-6deg) translate(0, 0); opacity: 0.7; }
+  50% { transform: rotate(8deg) translate(-15px, -5px); opacity: 0.95; }
+  100% { transform: rotate(-6deg) translate(0, 0); opacity: 0.7; }
+}
+
+.batsignal-group {
+  transform-origin: 215px 180px;
+  animation: signalSweep 12s ease-in-out infinite;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+  border-radius: 50%;
+}
+
+h1 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 6.5vw, 56px);
+  line-height: 1.05;
+  margin: 8px 0 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 25px rgba(255, 204, 0, 0.5);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+h1 em {
+  font-style: normal;
+  color: var(--gold);
+}
+
+.lead {
+  max-width: 62ch;
+  color: var(--muted);
+  margin: 0;
+}
+
+/* -------------------------------------------------------------
+   GLASS PANELS & CARDS
+   ------------------------------------------------------------- */
+.glass {
+  position: relative;
+  background: linear-gradient(155deg, rgba(255, 204, 0, 0.08), rgba(15, 23, 42, 0.6) 50%, rgba(3, 4, 6, 0.85));
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow: inset 0 1px 0 rgba(255, 230, 128, 0.18), 0 0 0 1px rgba(0, 0, 0, 0.6), 0 16px 52px rgba(0, 0, 0, 0.7);
+  padding: clamp(20px, 3.2vw, 32px);
+}
+
+.glass::before {
+  content: "";
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  top: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), var(--cyan), transparent);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+section.glass.stack {
+  gap: 24px;
+}
+
+h2 {
+  font-family: var(--font-head);
+  font-size: clamp(22px, 4vw, 30px);
+  margin: 0 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  text-shadow: 0 0 16px rgba(255, 204, 0, 0.4);
+}
+
+h3 {
+  font-family: var(--font-head);
+  font-size: 16px;
+  margin: 0;
+  color: var(--gold-glow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.mod-tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+  border: 1px solid rgba(88, 166, 255, 0.35);
+  background: var(--cyan-dim);
+  padding: 3px 12px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+p {
+  margin: 0;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.grid3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 14px;
+}
+
+.grid3 > * {
+  min-width: 0;
+}
+
+.cell {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.4));
+  border: 1px solid rgba(255, 204, 0, 0.22);
+  border-top: 2px solid var(--gold);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  backdrop-filter: blur(12px);
+}
+
+.cell p, .cell li {
+  color: #d0d7de;
+}
+
+.cell b {
+  color: var(--text);
+}
+
+ul.tight {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+ul.tight li::marker {
+  color: var(--gold);
+}
+
+ul.tight li.rule {
+  list-style: none;
+  margin-left: -18px;
+  padding: 12px 14px;
+  border: 1px solid rgba(88, 166, 255, 0.2);
+  border-left: 3px solid var(--cyan);
+  border-radius: 8px;
+  background: var(--cyan-dim);
+  color: var(--text);
+}
+
+.note {
+  font-size: 13px;
+  color: #ffdfb8;
+  border: 1px solid rgba(255, 153, 0, 0.35);
+  background: rgba(255, 153, 0, 0.07);
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.src {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.src::before {
+  content: "🦇 INTEL SOURCE";
+  width: 100%;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--cyan);
+}
+
+.src a {
+  display: inline-block;
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--cyan);
+  border: 1px solid rgba(88, 166, 255, 0.35);
+  background: var(--cyan-dim);
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+
+.src a:hover {
+  box-shadow: 0 0 16px rgba(88, 166, 255, 0.45);
+  background: rgba(88, 166, 255, 0.2);
+}
+
+/* -------------------------------------------------------------
+   TELEMETRY HUD & RANK PROGRESSION
+   ------------------------------------------------------------- */
+.hud {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 20px;
+  border-radius: 14px;
+  border: 1px solid rgba(255, 204, 0, 0.2);
+}
+
+@media(max-width: 540px) {
+  .hud {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lvl {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  border: 2px solid var(--gold);
+  box-shadow: var(--glow), inset 0 0 20px rgba(255, 204, 0, 0.25);
+  font-family: var(--font-head);
+  line-height: 1;
+  background: rgba(255, 204, 0, 0.05);
+}
+
+.lvl b {
+  font-size: 36px;
+  display: block;
+  color: var(--gold-glow);
+}
+
+.lvl span {
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.rank {
+  font-family: var(--font-head);
+  font-size: 24px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gold-glow);
+  text-shadow: 0 0 10px rgba(255, 204, 0, 0.3);
+}
+
+.bar {
+  height: 14px;
+  border-radius: 99px;
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  margin: 8px 0 6px;
+}
+
+.bar i {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #997a00, var(--gold), var(--gold-glow));
+  box-shadow: 0 0 14px var(--gold);
+  transition: width 0.5s ease;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+}
+
+.stats b {
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+/* -------------------------------------------------------------
+   INTERACTIVE QUESTS & BOSS TRIALS
+   ------------------------------------------------------------- */
+.quests {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.q {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 14px;
+  border: 1px solid rgba(255, 204, 0, 0.22);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 0;
+}
+
+.q:hover {
+  border-color: var(--gold);
+  background: rgba(255, 204, 0, 0.04);
+}
+
+.q input {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border: 2px solid var(--gold);
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.q input:checked {
+  background: var(--gold);
+  box-shadow: var(--glow);
+}
+
+.q input:checked::after {
+  content: "✓";
+  color: #030406;
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.q.done {
+  background: var(--glass-strong);
+  border-color: var(--gold);
+  box-shadow: inset 0 0 18px rgba(255, 204, 0, 0.12);
+}
+
+.q .xp {
+  margin-left: auto;
+  flex: none;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--gold-glow);
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  padding: 2px 8px;
+  height: 22px;
+  line-height: 18px;
+}
+
+.q span.t {
+  min-width: 0;
+}
+
+.q small {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* -------------------------------------------------------------
+   30-DAY OPERATIONAL HEATMAP GRID
+   ------------------------------------------------------------- */
+.days {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 6px;
+}
+
+@media(max-width: 540px) {
+  .days {
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+
+.d {
+  aspect-ratio: 1;
+  max-width: 100%;
+  border-radius: 7px;
+  border: 1px solid rgba(255, 204, 0, 0.2);
+  background: rgba(0, 0, 0, 0.4);
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.15s ease;
+}
+
+.d:hover {
+  transform: scale(1.08);
+}
+
+.d.l1 {
+  background: rgba(255, 204, 0, 0.18);
+  color: var(--text);
+}
+
+.d.l2 {
+  background: rgba(255, 204, 0, 0.45);
+  color: var(--text);
+  border-color: var(--gold);
+}
+
+.d.l3 {
+  background: var(--gold);
+  color: #030406;
+  font-weight: 700;
+  box-shadow: var(--glow);
+  border-color: var(--gold-glow);
+}
+
+.d.today {
+  outline: 2px dashed var(--gold-glow);
+  outline-offset: 1px;
+}
+
+.legend {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-size: 11px;
+  color: var(--muted);
+  align-items: center;
+  font-family: var(--font-mono);
+}
+
+.legend i {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 1px solid var(--line);
+  vertical-align: -2px;
+  margin-right: 4px;
+}
+
+button.ghost {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button.ghost:hover {
+  box-shadow: var(--glow);
+  border-color: var(--gold);
+  background: rgba(255, 204, 0, 0.05);
+}
+
+.boss {
+  border-color: var(--gold);
+  box-shadow: var(--glow), inset 0 0 30px rgba(255, 204, 0, 0.06);
+}
+
+/* Toast Notifications */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  transform: translate(-50%, 30px);
+  opacity: 0;
+  pointer-events: none;
+  background: var(--gold);
+  color: #030406;
+  font-family: var(--font-head);
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  padding: 12px 22px;
+  border-radius: 10px;
+  box-shadow: var(--glow);
+  transition: 0.3s;
+  z-index: 20;
+  max-width: calc(100vw - 32px);
+}
+
+.toast.on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+nav.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+nav.chips a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  text-decoration: none;
+  color: var(--text);
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 99px;
+  background: var(--glass);
+  transition: all 0.2s;
+}
+
+nav.chips a:hover {
+  box-shadow: var(--glow);
+  border-color: var(--gold);
+}
+
+@keyframes pulse {
+  0%, 100% { text-shadow: 0 0 22px rgba(255, 204, 0, 0.45); }
+  50% { text-shadow: 0 0 36px rgba(255, 204, 0, 0.85); }
+}
+
+@media(prefers-reduced-motion: reduce) {
+  h1 { animation: none; }
+  .bar i, .toast, .q, .batsignal-group { transition: none; animation: none; }
+}
+
+footer {
+  font-size: 12px;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  text-align: center;
+  padding-top: 12px;
+}
 </style>
+</head>
+<body>
 
 <div class="wrap">
+  <!-- HEADER & GOTHAM SKYLINE WITH ANIMATED BAT-SIGNAL -->
   <header class="stack">
-    <div class="sky" aria-hidden="true"><svg viewBox="0 0 300 170" preserveAspectRatio="xMaxYMax slice" xmlns="http://www.w3.org/2000/svg">
-<defs><linearGradient id="beam" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ffc933" stop-opacity=".55"/><stop offset="1" stop-color="#ffc933" stop-opacity="0"/></linearGradient>
-<radialGradient id="disk"><stop offset="0" stop-color="#ffe066" stop-opacity=".9"/><stop offset="1" stop-color="#ffc933" stop-opacity="0"/></radialGradient></defs>
-<polygon points="215,160 150,0 300,0" fill="url(#beam)"/>
-<ellipse cx="225" cy="34" rx="62" ry="20" fill="url(#disk)"/>
-<path fill="#06070a" stroke="rgba(255,201,51,.35)" stroke-width="1" d="M0 170V118h14V96h12v22h10V84h16v34h8V104h14v14h10V70h6V58h4v12h6v48h12V92h18v26h8V108h12v10h10V76h14v42h10V98h12v20h14V88h10v30h12V102h14v16h10V94h12v76z"/>
-</svg></div>
-    <div class="tag">🌃 NEURO-OS // NOIR EDITION</div>
-    <h1>Low-Dopamine <em>Conditioning</em> Protocol</h1>
-    <p class="lead">Hindi ka tamad. Mali lang ang reward calibration mo. Dito, 5 modules, 1 tracker, zero fluff. Execute. 🌃</p>
+    <div class="sky" aria-hidden="true">
+      <svg viewBox="0 0 300 180" preserveAspectRatio="xMaxYMax slice" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="batbeam" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0" stop-color="#ffcc00" stop-opacity=".65"/>
+            <stop offset="1" stop-color="#ffcc00" stop-opacity="0"/>
+          </linearGradient>
+          <radialGradient id="batdisk">
+            <stop offset="0" stop-color="#ffe680" stop-opacity=".95"/>
+            <stop offset="1" stop-color="#ffcc00" stop-opacity="0"/>
+          </radialGradient>
+        </defs>
+
+        <!-- Sweeping Bat Signal Beam & Emblem Group -->
+        <g class="batsignal-group">
+          <polygon points="215,180 140,0 290,0" fill="url(#batbeam)"/>
+          <ellipse cx="215" cy="32" rx="68" ry="22" fill="url(#batdisk)"/>
+          <!-- Bat Emblem Silhouette inside the spotlight -->
+          <g transform="translate(182, 16) scale(0.32)" fill="#030406">
+            <path d="M100 20 C85 20 75 35 60 30 C45 25 35 10 20 15 C10 18 5 30 12 42 C20 55 35 60 50 65 C40 70 25 75 15 90 C8 100 12 115 25 110 C40 105 55 95 70 85 C75 95 85 105 95 115 C105 105 115 95 120 85 C135 95 150 105 165 110 C178 115 182 100 175 90 C165 75 150 70 140 65 C155 60 170 55 178 42 C185 30 180 18 170 15 C155 10 145 25 130 30 C115 35 105 20 100 20 Z"/>
+          </g>
+        </g>
+
+        <!-- Gotham City Skyline Silhouette -->
+        <path fill="#030406" stroke="rgba(255,204,0,.28)" stroke-width="1" d="M0 180V120h12V98h14v22h8V85h16v35h10V105h12v15h12V72h8V60h4v12h8v50h14V94h16v26h10V110h10v12h12V78h16v44h10V100h12v22h12V90h12v30h10V104h14v16h10V95h14v85z"/>
+      </svg>
+    </div>
+    <div class="tag">WAYNETECH SECURITY // PROTOCOL v4.2</div>
+    <h1>Low-Dopamine <em>Dark Knight</em> Protocol</h1>
+    <p class="lead">Hindi ka tamad, Operative. Re-calibrating lang ang reward circuitry mo sa Gotham baseline. 5 modules. Zero fluff. Execute.</p>
     <nav class="chips" aria-label="Modules">
-      <a href="#mc">🎮 Mission Control</a><a href="#m1">🧠 Reality Check</a><a href="#m2">🔒 Friction Inversion</a><a href="#m3">🧊 Boredom Training</a><a href="#m4">⚡ Micro-Momentum</a><a href="#m5">📡 Weekly Calibration</a>
+      <a href="#mc">🦇 Mission Control</a>
+      <a href="#m1">🧠 Neural Brief</a>
+      <a href="#m2">🔒 Tactical Friction</a>
+      <a href="#m3">🧊 Void Discipline</a>
+      <a href="#m4">⚡ Kinetic Start</a>
+      <a href="#m5">📡 Weekly Sitrep</a>
     </nav>
   </header>
 
-  <!-- MISSION CONTROL -->
+  <!-- MISSION CONTROL HUD & TRACKER -->
   <section id="mc" class="glass stack" aria-labelledby="mc-h">
     <div>
-      <div class="mod-tag">🎮 Tracker</div>
+      <div class="mod-tag">🦇 TELEMETRY HUD</div>
       <h2 id="mc-h">Mission Control</h2>
     </div>
     <div class="hud">
-      <div class="lvl" aria-label="Level"><div><span>LVL</span><b id="lvl">1</b></div></div>
+      <div class="lvl" aria-label="Level">
+        <div><span>RANK</span><b id="lvl">1</b></div>
+      </div>
       <div>
-        <div class="rank" id="rank">Scroll Zombie</div>
-        <div class="bar" role="progressbar" aria-label="XP to next level" aria-valuemin="0" aria-valuemax="200" id="xpbar"><i id="xpfill"></i></div>
+        <div class="rank" id="rank">Rookie Vigilante</div>
+        <div class="bar" role="progressbar" aria-label="XP to next rank" aria-valuemin="0" aria-valuemax="200" id="xpbar"><i id="xpfill"></i></div>
         <div class="stats">
-          <span>XP <b id="xp">0</b></span><span>Next lvl <b id="xpnext">200</b> XP</span><span>🔥 Streak <b id="streak">0</b> days</span><span>✅ Cleared days <b id="cleared">0</b></span>
+          <span>XP <b id="xp">0</b></span>
+          <span>Next Rank <b id="xpnext">200</b> XP</span>
+          <span>🔥 Streak <b id="streak">0</b> days</span>
+          <span>✅ Cleared <b id="cleared">0</b> days</span>
         </div>
       </div>
     </div>
 
-    <div class="row"><h3>Daily quests <span id="todayLabel" style="color:var(--muted);text-transform:none;letter-spacing:0"></span></h3><span class="stats">Clear the day: <b id="todayCount">0</b>/4 quests</span></div>
+    <!-- DAILY QUESTS -->
+    <div class="row">
+      <h3>Daily Protocols <span id="todayLabel" style="color:var(--muted);text-transform:none;letter-spacing:0;font-family:var(--font-mono)"></span></h3>
+      <span class="stats">Cleared today: <b id="todayCount">0</b>/4 required</span>
+    </div>
     <div class="quests" id="quests"></div>
 
-    <div class="row"><h3>30-day grid</h3>
-      <div class="legend"><span><i style="background:rgba(0,0,0,.35)"></i>0</span><span><i style="background:rgba(255,201,51,.2)"></i>1-3</span><span><i style="background:rgba(255,201,51,.5)"></i>4-5 (cleared)</span><span><i style="background:var(--red)"></i>6 (perfect)</span></div>
+    <!-- 30-DAY HEATMAP GRID -->
+    <div class="row">
+      <h3>30-Day Operational Grid</h3>
+      <div class="legend">
+        <span><i style="background:rgba(0,0,0,.4)"></i>0</span>
+        <span><i style="background:rgba(255,204,0,.18)"></i>1-3</span>
+        <span><i style="background:rgba(255,204,0,.45)"></i>4-5 (cleared)</span>
+        <span><i style="background:var(--gold)"></i>6 (flawless)</span>
+      </div>
     </div>
     <div class="days" id="days"></div>
 
+    <!-- WEEKLY BOSS TRIALS -->
     <div class="glass boss stack">
-      <div class="row"><h3>👹 Weekly boss</h3><span class="stats">+25 XP each · <b id="bossCount">0</b>/4</span></div>
+      <div class="row"><h3>👹 Arkham Boss Trials</h3><span class="stats">+25 XP each · <b id="bossCount">0</b>/4</span></div>
       <div class="quests" id="boss"></div>
     </div>
-    <div class="row"><span class="stats">Progress is saved in this browser only.</span><button class="ghost" id="reset" type="button">Reset progress</button></div>
+
+    <div class="row">
+      <span class="stats">Data encrypted locally in browser storage.</span>
+      <button class="ghost" id="reset" type="button">Purge Protocol Data</button>
+    </div>
   </section>
 
-  <!-- 1 -->
+  <!-- MODULE 1: NEURAL BRIEF -->
   <section id="m1" class="glass stack" aria-labelledby="m1h">
-    <div><div class="mod-tag">🧠 Module 1</div><h2 id="m1h">Neurobiology Reality Check</h2></div>
-    <div class="grid3">
-      <div class="cell"><h3>Dopamine = pursuit</h3><p>Hindi ito "pleasure chemical". Tina-track nito ang <b>reward prediction error</b>: mas maganda ba o mas pangit ang kinalabasan kaysa inaasahan mo? Ang cue na nagpapa-predict ng reward ang nagpapagalaw sa'yo.</p></div>
-      <div class="cell"><h3>Bakit torture ang editing</h3><p>Pag sanay ka sa scroll at games (instant, paulit-ulit, nakakagulat), ang edit, study at deep work ay mabagal at delayed ang reward. Ikukumpara sila ng utak mo sa high-stim hits, kaya <b>flat at masakit</b> ang pakiramdam.</p></div>
-      <div class="cell"><h3>Ang bayad</h3><p>Ayon kay Dr. Anna Lembke, parang <b>balanse ng pleasure at pain</b> ang utak. Pag sobrang hits, nag-a-adapt ito at bumababa ang baseline mo (downregulation). Resulta: bored, irritable, walang drive pag wala ang hit.</p></div>
+    <div>
+      <div class="mod-tag">🧠 Module 1</div>
+      <h2 id="m1h">Neurobiology Reality Check</h2>
     </div>
-    <h3>🛠 Reset protocol</h3>
+    <div class="grid3">
+      <div class="cell">
+        <h3>Dopamine = Pursuit</h3>
+        <p>Hindi ito "pleasure chemical". Signal ito ng <b>reward prediction error</b>: na-surpass ba ng outcome ang expectation mo? Ang cue ang nag-a-activate sa'yo.</p>
+      </div>
+      <div class="cell">
+        <h3>Bakit torture ang deep work</h3>
+        <p>Pag sanay ka sa instant dopamine hits ng short-form scrolls at games, ang coding, editing, at studying ay mabagal at delayed ang payoff. Ikinukumpara ng utak mo sa high-stim, kaya <b>flat at masakit</b>.</p>
+      </div>
+      <div class="cell">
+        <h3>Baseline Homeostasis</h3>
+        <p>Ayon kay Dr. Anna Lembke, parang teeter-totter ang brain chemistry. Sobrang high-hits = nag-aadapt ang utak at binababa ang baseline (downregulation). Resulta: irritable at walang gana pag walang hit.</p>
+      </div>
+    </div>
+    <h3>🛠 Counter-Protocol</h3>
     <ul class="tight">
-      <li class="rule"><b>30-day fast</b> sa pinakamasamang offender mo (halimbawa: short-form video o games). Isa lang muna, huwag lahat. Ito ang inirerekomenda ni Lembke para bumalik ang baseline.</li>
-      <li class="rule"><b>Protektahan ang tulog.</b> Ang sleep deprivation ay iniuugnay ni Dr. Nora Volkow sa mas mababang D2 receptor availability sa striatum. Puyat = mas mahirap mag-focus.</li>
-      <li class="rule">Maglagay ng <b>friction</b> (Module 2) para hindi mo na kailangang umasa sa willpower.</li>
+      <li class="rule"><b>30-day tactical fast</b> sa pinaka-malalang dopamine trigger mo (hal. short-form video). Isa muna, huwag sabay-sabay.</li>
+      <li class="rule"><b>Protektahan ang tulog.</b> Ayon kay Dr. Nora Volkow, puyat = mababang D2 receptor availability. Puyat ka = zero focus.</li>
+      <li class="rule">Maglagay ng <b>friction</b> (Module 2) para hindi umasa sa sirang willpower.</li>
     </ul>
-    <p class="note">⚠️ Totoo: ang "dopamine fast" ay galing sa clinical experience ni Lembke, hindi sa malaking trial. Gamitin mo bilang eksperimento sa sarili, hindi bilang garantisadong gamot.</p>
+    <p class="note">⚠️ Ang "dopamine fast" ay klinikal na obserbasyon ni Lembke, hindi magic pill. Gamitin bilang personal baseline experiment.</p>
     <div class="src">
-      <a href="https://www.rnz.co.nz/life/wellbeing/how-to-tell-if-you-have-a-dopamine-deficit-and-what-you-can-do-to-reset" target="_blank" rel="noopener">🔗 Lembke: dopamine deficit at reset</a>
-      <a href="https://www.frontiersin.org/journals/neuroscience/articles/10.3389/fnins.2023.1171612/full" target="_blank" rel="noopener">🔗 Reward prediction error (review)</a>
-      <a href="https://www.sfn.org/publications/latest-news/2008/08/19/one-sleepless-night-increases-dopamine-in-the-human-brain" target="_blank" rel="noopener">🔗 Volkow: sleepless night at dopamine</a>
+      <a href="https://www.rnz.co.nz/life/wellbeing/how-to-tell-if-you-have-a-dopamine-deficit-and-what-you-can-do-to-reset" target="_blank" rel="noopener">🔗 Lembke: Dopamine Deficit & Reset</a>
+      <a href="https://www.sfn.org/publications/latest-news/2008/08/19/one-sleepless-night-increases-dopamine-in-the-human-brain" target="_blank" rel="noopener">🔗 Volkow: Sleepless Night & Dopamine</a>
     </div>
   </section>
 
-  <!-- 2 -->
+  <!-- MODULE 2: FRICTION INVERSION -->
   <section id="m2" class="glass stack" aria-labelledby="m2h">
-    <div><div class="mod-tag">🔒 Module 2</div><h2 id="m2h">Friction Inversion</h2><p style="color:var(--muted)">Ayon sa Fogg Behavior Model, nangyayari ang behavior kapag sabay ang motivation, ability at prompt. Hindi mo kayang kontrolin ang motivation, kaya baguhin mo ang <b>ability</b>: gawing mahirap ang scroll, madali ang trabaho.</p></div>
+    <div>
+      <div class="mod-tag">🔒 Module 2</div>
+      <h2 id="m2h">Tactical Friction Inversion</h2>
+      <p style="color:var(--muted)">Batay sa Fogg Behavior Model: Behavior = Motivation + Ability + Prompt. Huwag umasa sa motivation—baguhin ang <b>ability</b>: gawing mahirap mag-scroll, madali ang trabaho.</p>
+    </div>
     <div class="grid3">
-      <div class="cell"><h3>① Taasan ang friction ng scroll</h3>
+      <div class="cell">
+        <h3>① Maximize Scroll Friction</h3>
         <ul class="tight">
-          <li>PC: i-block ang YouTube, Reddit, game launchers gamit ang <b>Cold Turkey</b> (libre, Windows at macOS lang).</li>
-          <li>Phone: i-delete ang apps, mag-log out, o gamitin ang built-in screen time limits. Iwan ang phone sa <b>ibang kwarto</b> habang nagtatrabaho.</li>
+          <li>PC: i-block ang distractions gamit ang <b>Cold Turkey</b> (libre, Windows/macOS).</li>
+          <li>Phone: i-delete ang social apps o iwan ang phone sa <b>ibang kwarto</b> habang nagko-code o nagtatrabaho.</li>
         </ul>
-        <div class="src"><a href="https://getcoldturkey.com/" target="_blank" rel="noopener">🔗 Cold Turkey (free version)</a><a href="https://support.apple.com/guide/iphone/welcome/ios" target="_blank" rel="noopener">🔗 iPhone User Guide (hanapin: Screen Time)</a></div>
+        <div class="src"><a href="https://getcoldturkey.com/" target="_blank" rel="noopener">🔗 Cold Turkey Blocker</a></div>
       </div>
-      <div class="cell"><h3>② Ibaba ang friction ng trabaho</h3>
+      <div class="cell">
+        <h3>② Minimize Work Friction</h3>
         <ul class="tight">
-          <li>Gabi pa lang, <b>i-open na ang project file</b> at ilagay ang playhead sa unang cut.</li>
-          <li>Isang desk setup lang para sa trabaho. Walang game, walang snack, walang kalat.</li>
-          <li>Isulat ang eksaktong unang aksyon ("i-trim ang intro"), hindi "mag-edit".</li>
+          <li>Bago matulog, <b>i-open na ang project file</b> sa VS Code o Premiere para walang barrier bukas.</li>
+          <li>Isang clean workstation setup. Walang tabs, walang tabs ng games.</li>
+          <li>Isulat ang eksaktong unang action item, hal. "i-fix ang Python function line 42".</li>
         </ul>
         <div class="src"><a href="https://behaviormodel.org/" target="_blank" rel="noopener">🔗 Fogg Behavior Model</a></div>
       </div>
-      <div class="cell"><h3>③ Mag-anchor ng launch ritual</h3>
+      <div class="cell">
+        <h3>③ Trigger Rituals</h3>
         <ul class="tight">
-          <li>Formula: <b>Pagkatapos ng [existing habit], gagawin ko [tiny start].</b></li>
-          <li>Halimbawa: pagkatapos uminom ng kape, bubuksan ko ang timeline at mag-cut ng 1 clip.</li>
-          <li>Mag-celebrate agad ng maliit (isang "yes!"). Doon nabubuo ang craving para sa trabaho.</li>
+          <li>Formula: <b>Pagkatapos ng [current habit], gagawin ko ang [tiny step].</b></li>
+          <li>Halimbawa: pagka-upo sa desk, mag-type ng isang linya ng code.</li>
         </ul>
-        <div class="src"><a href="https://tinyhabits.com/" target="_blank" rel="noopener">🔗 Tiny Habits (BJ Fogg)</a></div>
+        <div class="src"><a href="https://tinyhabits.com/" target="_blank" rel="noopener">🔗 Tiny Habits Protocol</a></div>
       </div>
     </div>
-    <p class="note">Cold Turkey ay para sa desktop. Para sa phone, built-in settings ng OS ang gamitin; ang pinakamalakas pa rin ay pisikal na layo.</p>
   </section>
 
-  <!-- 3 -->
+  <!-- MODULE 3: BOREDOM TRAINING -->
   <section id="m3" class="glass stack" aria-labelledby="m3h">
-    <div><div class="mod-tag">🧊 Module 3</div><h2 id="m3h">Boredom Tolerance Training</h2></div>
-    <p>Sa pag-aaral ni Timothy Wilson (2014), maraming tao ang ayaw umupo mag-isa kasama ang sariling isip nang 6 hanggang 15 minuto. Marami pa ang pumiling magbigay ng sarili ng mild electric shock. Ibig sabihin, ang boredom ay <b>skill na kailangang i-train</b>, hindi kahinaan ng karakter mo.</p>
+    <div>
+      <div class="mod-tag">🧊 Module 3</div>
+      <h2 id="m3h">Void Tolerance Training</h2>
+    </div>
+    <p>Ayon kay Timothy Wilson (2014), karamihan ng tao ay hindi kayang umupo nang 6 hanggang 15 minuto kasama ang sariling isip nang walang distraction—mas pinili pa ng iba ang mild electric shocks kaysa mainip. Ang boredom ay <b>skill</b>, hindi flaw.</p>
     <div class="cell">
-      <h3>🧊 The Blank Block (araw-araw)</h3>
+      <h3>🧊 The Blank Block (Daily Drill)</h3>
       <ul class="tight">
-        <li><b>Setup:</b> Upuan, timer, phone sa ibang kwarto. Walang music, video, libro o notes.</li>
-        <li><b>Duration:</b> Week 1 = 5 min · Week 2 = 10 min · Week 3 = 15 min · Week 4+ = 20 min.</li>
-        <li><b>Pag may urge</b> (kunin ang phone, tumayo): sabihin sa isip na "urge", huminga nang 3 beses, at manatili. Hindi mo kailangang manalo, kailangan mo lang <b>hindi sumunod</b>.</li>
-        <li><b>Kapag natapos:</b> i-check ang quest sa tracker. Tapos na ang rep.</li>
+        <li><b>Setup:</b> Upuan, timer, phone sa kabilang kwarto. Walang music, walang screen, walang notebook.</li>
+        <li><b>Duration:</b> Week 1 = 5 min · Week 2 = 10 min · Week 3 = 15 min · Week 4 = 20 min.</li>
+        <li><b>Urge Management:</b> Pag gusto mong kunin ang phone, acknowledge ang urge, huminga nang 3 beses, at manatili. Hindi mo kailangang manalo sa isip, kailangan mo lang <b>huwag sumunod</b>.</li>
       </ul>
     </div>
-    <p class="note">⚠️ Ang Blank Block ay extrapolation mula sa research ni Wilson (na gumamit ng meditation training para makatulong). Hindi ito direktang napatunayang magpapataas ng gana sa deep work, pero logical na rep para sa tolerance.</p>
-    <div class="src"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4330241" target="_blank" rel="noopener">🔗 Wilson et al. 2014: "Just think"</a></div>
+    <div class="src"><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4330241" target="_blank" rel="noopener">🔗 Wilson et al. 2014: "Just Think" Study</a></div>
   </section>
 
-  <!-- 4 -->
+  <!-- MODULE 4: MICRO-MOMENTUM -->
   <section id="m4" class="glass stack" aria-labelledby="m4h">
-    <div><div class="mod-tag">⚡ Module 4</div><h2 id="m4h">Micro-Momentum Formula</h2><p style="color:var(--muted)">Hindi mauuna ang motivation. Ang <b>aksyon</b> ang nagbibigay nito. Baligtarin ang order mo.</p></div>
-    <div class="grid3">
-      <div class="cell"><h3>⏱ 5-Minute Rule</h3><p>Mag-work ka ng 5 minuto lang, tapos <b>pwede kang huminto nang walang guilt</b>. Madalas, tuloy ka na. Kapag huminto ka, panalo pa rin, dahil naka-start ka na.</p></div>
-      <div class="cell"><h3>🪜 Micro-stepping</h3><p>Hatiin hanggang kasing-liit ng 2 minuto: "buksan ang Premiere", "i-import ang footage", "i-cut ang 1 clip". Hanggang hindi 2 minuto ang step, masyado pa itong malaki.</p></div>
-      <div class="cell"><h3>📆 Schedule, huwag hintayin ang mood</h3><p>Ilagay sa kalendaryo ang oras at lugar ng trabaho. Sa behavioral activation, ang <b>activity ang nauuna</b>, at ang mood ang sumusunod.</p></div>
+    <div>
+      <div class="mod-tag">⚡ Module 4</div>
+      <h2 id="m4h">Kinetic Micro-Momentum</h2>
+      <p style="color:var(--muted)">Hindi nauuna ang motivation. Ang <b>aksyon</b> ang nagpapasiklab ng motivation.</p>
     </div>
-    <ul class="tight">
-      <li class="rule"><b>Rule 1:</b> Bago mag-scroll, gawin muna ang micro-step. Palaging trabaho muna.</li>
-      <li class="rule"><b>Rule 2:</b> Isang task lang ang bukas na window. Walang tab-hopping.</li>
-      <li class="rule"><b>Rule 3:</b> Pagkatapos ng 25 min block, 5 min break na walang screen. Hindi break ang phone.</li>
-    </ul>
-    <p class="note">⚠️ Ang ebidensya ng behavioral activation ay galing sa paggamot ng depression. Pero ang prinsipyo (action muna bago motivation) ay praktikal para sa procrastination.</p>
-    <div class="src">
-      <a href="https://jamesclear.com/how-to-stop-procrastinating" target="_blank" rel="noopener">🔗 James Clear: Two-Minute Rule</a>
-      <a href="https://www.frontiersin.org/journals/psychiatry/articles/10.3389/fpsyt.2022.845138/full" target="_blank" rel="noopener">🔗 Behavioral activation (review)</a>
+    <div class="grid3">
+      <div class="cell">
+        <h3>⏱ 5-Minute Rule</h3>
+        <p>Trabaho ng 5 minuto lang. Pwede kang huminto pagkatapos nang walang guilt. Kadalasan, tuloy-tuloy na ang takbo mo dahil na-overcome mo na ang inertia.</p>
+      </div>
+      <div class="cell">
+        <h3>🪜 Micro-Stepping</h3>
+        <p>Hatiin ang task hanggang maging 2 minutong hakbang: "buksan ang repo", "gawin ang git commit". Kung mahirap pa, masyadong malaki ang step mo.</p>
+      </div>
+      <div class="cell">
+        <h3>📆 Calendar Lockdown</h3>
+        <p>Ilagay sa schedule ang deep work blocks. Behavioral activation: action precedes mood.</p>
+      </div>
     </div>
   </section>
 
-  <!-- 5 -->
+  <!-- MODULE 5: WEEKLY CALIBRATION -->
   <section id="m5" class="glass stack" aria-labelledby="m5h">
-    <div><div class="mod-tag">📡 Module 5</div><h2 id="m5h">Weekly Dopamine Calibration</h2></div>
-    <div class="grid3">
-      <div class="cell"><h3>📅 Sabado: Low-Stim Half-Day</h3><p>4 hanggang 6 oras na walang short-form video at games. Pwede ang paglalakad, pagluluto, libro, paglilinis, o gym. Dito nagre-recalibrate ang baseline.</p></div>
-      <div class="cell"><h3>🧾 Linggo: 20-min Review</h3><ul class="tight"><li>Ilang araw ang na-clear mo sa tracker?</li><li>Anong app o oras ang pinakamadalas na nakalusot?</li><li>Dagdagan ang friction doon. Isang pagbabago lang.</li></ul></div>
-      <div class="cell"><h3>🗓 Plan next week</h3><p>Maglagay ng 5 deep-work blocks sa kalendaryo. Ayusin ang sleep schedule para pare-pareho ang oras ng tulog. Ito ang pundasyon ng buong protocol.</p></div>
+    <div>
+      <div class="mod-tag">📡 Module 5</div>
+      <h2 id="m5h">Weekly Tactical Sitrep</h2>
     </div>
-    <p><b>Reward:</b> Pagkatapos ng linggong may 5+ cleared days, bigyan ang sarili ng <b>planned</b> na high-dopamine treat (isang gaming session o movie). Sinadya, may limit, at hindi ito ginagamit para tumakas.</p>
-    <div class="src"><a href="https://www.radcliffe.harvard.edu/news-and-ideas/why-sleep" target="_blank" rel="noopener">🔗 Volkow: "Why Sleep?" (Radcliffe)</a></div>
+    <div class="grid3">
+      <div class="cell">
+        <h3>📅 Saturday Low-Stim Half-Day</h3>
+        <p>4 hanggang 6 oras na walang short-form video at gaming. Maglakad, mag-ayos ng workspace, magbasa. Dito nagre-reboot ang dopaminergic baseline.</p>
+      </div>
+      <div class="cell">
+        <h3>🧾 Sunday 20-Min Review</h3>
+        <ul class="tight">
+          <li>Ilang araw ang na-clear mo sa tracker?</li>
+          <li>Anong oras o app ang tumagos sa depensa mo?</li>
+          <li>I-patch ang friction point na iyon.</li>
+        </ul>
+      </div>
+      <div class="cell">
+        <h3>🗓 Next Week Planning</h3>
+        <p>I-lock sa kalendaryo ang 5 deep work blocks. I-sync ang sleep schedule. Pundasyon ito ng buong operasyon.</p>
+      </div>
+    </div>
   </section>
 
-  <footer>🌃 Consistency beats intensity. Isang cleared day lang ngayon, tapos ulitin bukas.</footer>
+  <footer>🦇 WAYNETECH OS // Consistency > Intensity. One cleared day at a time.</footer>
 </div>
+
+<!-- TOAST NOTIFICATION CONTAINER -->
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<!-- -------------------------------------------------------------
+     DASHBOARD INTERACTIVE ENGINE & DATA PERSISTENCE
+   ------------------------------------------------------------- -->
 <script>
 (function(){
-  var QUESTS=[
-    {id:'blank',e:'🧊',t:'Blank Block',s:'0 input, phone sa ibang kwarto',xp:30},
-    {id:'five',e:'⚡',t:'5-Minute Start',s:'sa pinakamahirap mong task',xp:20},
-    {id:'friction',e:'🔒',t:'Friction ON',s:'blockers at phone out of reach',xp:15},
-    {id:'deep',e:'🎯',t:'25-min Deep Work',s:'isang task, isang window',xp:30},
-    {id:'micro',e:'🪜',t:'Micro-step muna',s:'bago ang kahit anong scroll',xp:15},
-    {id:'sleep',e:'😴',t:'Protektadong tulog',s:'regular na oras ng tulog kagabi',xp:15}
+  // Quest Definitions
+  var QUESTS = [
+    {id:'blank', e:'🧊', t:'Blank Block', s:'0 input, phone sa ibang kwarto', xp:30},
+    {id:'five', e:'⚡', t:'5-Minute Start', s:'sa pinakamabigat mong task', xp:20},
+    {id:'friction', e:'🔒', t:'Friction Armed', s:'blockers active, phone out of reach', xp:15},
+    {id:'deep', e:'🎯', t:'25-min Deep Work', s:'isang task, zero tab switching', xp:30},
+    {id:'micro', e:'🪜', t:'Micro-step Executed', s:'bago ang kahit anong scroll', xp:15},
+    {id:'sleep', e:'😴', t:'Protected Sleep', s:'solid rest kagabi', xp:15}
   ];
-  var BOSS=[
-    {id:'lowstim',e:'📅',t:'Low-Stim Half-Day',s:'Sabado o Linggo',xp:25},
-    {id:'review',e:'🧾',t:'20-min Review',s:'ano ang nakalusot?',xp:25},
-    {id:'friction',e:'🔧',t:'Dagdagan ang friction',s:'isang pagbabago lang',xp:25},
-    {id:'plan',e:'🗓',t:'5 deep blocks planned',s:'nasa kalendaryo na',xp:25}
-  ];
-  var RANKS=['Scroll Zombie','Glitch Rookie','Signal Seeker','Focus Runner','Netrunner','Dopamine Ghost','Cyber Monk'];
-  var CLEAR=4, PER=200, KEY='ldp-noir-v1';
-  var state={days:{},weeks:{}};
-  try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&p.days&&p.weeks)state=p;}}catch(e){}
-  function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
-  function pad(n){return n<10?'0'+n:''+n}
-  function dk(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
-  function mondayKey(d){var x=new Date(d.getFullYear(),d.getMonth(),d.getDate());var off=(x.getDay()+6)%7;x.setDate(x.getDate()-off);return dk(x)}
-  var today=new Date(), tk=dk(today), wk=mondayKey(today);
-  var $=function(id){return document.getElementById(id)};
-  var xpOf={};QUESTS.forEach(function(q){xpOf[q.id]=q.xp});
-  var bossXp={};BOSS.forEach(function(q){bossXp[q.id]=q.xp});
 
-  function build(list,host,getSet,onToggle){
-    host.innerHTML='';
-    list.forEach(function(q){
-      var lab=document.createElement('label');lab.className='q';
-      var cb=document.createElement('input');cb.type='checkbox';cb.id=host.id+'-'+q.id;
-      var span=document.createElement('span');span.className='t';
-      span.innerHTML=q.e+' <b>'+q.t+'</b><small>'+q.s+'</small>';
-      var xp=document.createElement('span');xp.className='xp';xp.textContent='+'+q.xp;
-      lab.appendChild(cb);lab.appendChild(span);lab.appendChild(xp);host.appendChild(lab);
-      cb.addEventListener('change',function(){onToggle(q.id,cb.checked)});
+  // Boss Trial Definitions
+  var BOSS = [
+    {id:'lowstim', e:'📅', t:'Low-Stim Half-Day', s:'Sabado o Linggo', xp:25},
+    {id:'review', e:'🧾', t:'20-min Sitrep Review', s:'suriin ang security leaks', xp:25},
+    {id:'friction', e:'🔧', t:'Patch Defenses', s:'dagdagan ang friction point', xp:25},
+    {id:'plan', e:'🗓', t:'5 Deep Blocks Locked', s:'naka-schedule sa kalendaryo', xp:25}
+  ];
+
+  // Rank Titles
+  var RANKS = [
+    'Rookie Vigilante',
+    'Night Patrol',
+    'Shadow Operative',
+    'Stalker of Gotham',
+    'Elite Netrunner',
+    'Master Tactician',
+    'The Dark Knight'
+  ];
+
+  var CLEAR = 4, PER = 200, KEY = 'waynetech-dopamine-v2';
+  var state = {days:{}, weeks:{}};
+
+  // Load from LocalStorage
+  try {
+    var raw = localStorage.getItem(KEY);
+    if(raw) {
+      var p = JSON.parse(raw);
+      if(p && p.days && p.weeks) state = p;
+    }
+  } catch(e) {}
+
+  function save() {
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  function pad(n) { return n < 10 ? '0' + n : '' + n; }
+  function dk(d) { return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); }
+  function mondayKey(d) {
+    var x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    var off = (x.getDay() + 6) % 7;
+    x.setDate(x.getDate() - off);
+    return dk(x);
+  }
+
+  var today = new Date(), tk = dk(today), wk = mondayKey(today);
+  var $ = function(id) { return document.getElementById(id); };
+
+  var xpOf = {}; QUESTS.forEach(function(q){ xpOf[q.id] = q.xp; });
+  var bossXp = {}; BOSS.forEach(function(q){ bossXp[q.id] = q.xp; });
+
+  // Build Checklist HTML
+  function build(list, host, onToggle) {
+    host.innerHTML = '';
+    list.forEach(function(q) {
+      var lab = document.createElement('label'); lab.className = 'q';
+      var cb = document.createElement('input'); cb.type = 'checkbox'; cb.id = host.id + '-' + q.id;
+      var span = document.createElement('span'); span.className = 't';
+      span.innerHTML = q.e + ' <b>' + q.t + '</b><small>' + q.s + '</small>';
+      var xp = document.createElement('span'); xp.className = 'xp'; xp.textContent = '+' + q.xp + ' XP';
+      lab.appendChild(cb); lab.appendChild(span); lab.appendChild(xp); host.appendChild(lab);
+      cb.addEventListener('change', function(){ onToggle(q.id, cb.checked); });
     });
   }
-  function totalXp(){
-    var t=0,k;
-    for(k in state.days)state.days[k].forEach(function(id){t+=xpOf[id]||0});
-    for(k in state.weeks)state.weeks[k].forEach(function(id){t+=bossXp[id]||0});
+
+  function totalXp() {
+    var t = 0, k;
+    for(k in state.days) state.days[k].forEach(function(id){ t += xpOf[id] || 0; });
+    for(k in state.weeks) state.weeks[k].forEach(function(id){ t += bossXp[id] || 0; });
     return t;
   }
-  function count(k){return (state.days[k]||[]).length}
-  function streak(){
-    var d=new Date(today),s=0;
-    if(count(dk(d))<CLEAR)d.setDate(d.getDate()-1);
-    while(count(dk(d))>=CLEAR){s++;d.setDate(d.getDate()-1)}
+
+  function count(k) { return (state.days[k] || []).length; }
+
+  function streak() {
+    var d = new Date(today), s = 0;
+    if(count(dk(d)) < CLEAR) d.setDate(d.getDate() - 1);
+    while(count(dk(d)) >= CLEAR) { s++; d.setDate(d.getDate() - 1); }
     return s;
   }
-  var toastT;
-  function toast(m){var t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toastT);toastT=setTimeout(function(){t.classList.remove('on')},2200)}
 
-  function toggle(store,key,id,on){
-    var a=store[key]||[];var i=a.indexOf(id);
-    if(on&&i<0)a.push(id);if(!on&&i>=0)a.splice(i,1);
-    store[key]=a;
+  var toastT;
+  function toast(m) {
+    var t = $('toast');
+    t.textContent = m;
+    t.classList.add('on');
+    clearTimeout(toastT);
+    toastT = setTimeout(function(){ t.classList.remove('on'); }, 2400);
   }
-  function render(){
-    var xp=totalXp(),lvl=Math.floor(xp/PER)+1,into=xp%PER;
-    $('lvl').textContent=lvl;
-    $('rank').textContent=RANKS[Math.min(lvl-1,RANKS.length-1)];
-    $('xp').textContent=xp;$('xpnext').textContent=PER-into;
-    $('xpfill').style.width=(into/PER*100)+'%';
-    $('xpbar').setAttribute('aria-valuenow',into);
-    $('streak').textContent=streak();
-    var cleared=0,k;for(k in state.days)if(state.days[k].length>=CLEAR)cleared++;
-    $('cleared').textContent=cleared;
-    var tc=count(tk);$('todayCount').textContent=Math.min(tc,CLEAR);
-    $('bossCount').textContent=(state.weeks[wk]||[]).length;
-    // quests state
-    QUESTS.forEach(function(q){var cb=$('quests-'+q.id);var on=(state.days[tk]||[]).indexOf(q.id)>=0;cb.checked=on;cb.parentNode.classList.toggle('done',on)});
-    BOSS.forEach(function(q){var cb=$('boss-'+q.id);var on=(state.weeks[wk]||[]).indexOf(q.id)>=0;cb.checked=on;cb.parentNode.classList.toggle('done',on)});
-    // grid
-    var g=$('days');g.innerHTML='';
-    for(var i=29;i>=0;i--){
-      var d=new Date(today.getFullYear(),today.getMonth(),today.getDate()-i);var key=dk(d);var c=count(key);
-      var el=document.createElement('div');
-      el.className='d'+(c>=6?' l3':c>=CLEAR?' l2':c>0?' l1':'')+(i===0?' today':'');
-      el.textContent=d.getDate();el.title=key+' · '+c+'/6';
+
+  function toggle(store, key, id, on) {
+    var a = store[key] || [];
+    var i = a.indexOf(id);
+    if(on && i < 0) a.push(id);
+    if(!on && i >= 0) a.splice(i, 1);
+    store[key] = a;
+  }
+
+  function render() {
+    var xp = totalXp(), lvl = Math.floor(xp / PER) + 1, into = xp % PER;
+    $('lvl').textContent = lvl;
+    $('rank').textContent = RANKS[Math.min(lvl - 1, RANKS.length - 1)];
+    $('xp').textContent = xp;
+    $('xpnext').textContent = PER - into;
+    $('xpfill').style.width = (into / PER * 100) + '%';
+    $('xpbar').setAttribute('aria-valuenow', into);
+    $('streak').textContent = streak();
+
+    var cleared = 0, k;
+    for(k in state.days) if(state.days[k].length >= CLEAR) cleared++;
+    $('cleared').textContent = cleared;
+
+    var tc = count(tk);
+    $('todayCount').textContent = Math.min(tc, CLEAR);
+    $('bossCount').textContent = (state.weeks[wk] || []).length;
+
+    // Quests UI state
+    QUESTS.forEach(function(q) {
+      var cb = $('quests-' + q.id);
+      if(cb) {
+        var on = (state.days[tk] || []).indexOf(q.id) >= 0;
+        cb.checked = on;
+        cb.parentNode.classList.toggle('done', on);
+      }
+    });
+
+    BOSS.forEach(function(q) {
+      var cb = $('boss-' + q.id);
+      if(cb) {
+        var on = (state.weeks[wk] || []).indexOf(q.id) >= 0;
+        cb.checked = on;
+        cb.parentNode.classList.toggle('done', on);
+      }
+    });
+
+    // Heatmap Grid
+    var g = $('days'); g.innerHTML = '';
+    for(var i = 29; i >= 0; i--) {
+      var d = new Date(today.getFullYear(), today.getMonth(), today.getDate() - i);
+      var key = dk(d);
+      var c = count(key);
+      var el = document.createElement('div');
+      el.className = 'd' + (c >= 6 ? ' l3' : c >= CLEAR ? ' l2' : c > 0 ? ' l1' : '') + (i === 0 ? ' today' : '');
+      el.textContent = d.getDate();
+      el.title = key + ' · ' + c + '/6 Protocol Quests';
       g.appendChild(el);
     }
   }
-  $('todayLabel').textContent='· '+today.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
-  build(QUESTS,$('quests'),null,function(id,on){
-    var before=count(tk),oldLvl=Math.floor(totalXp()/PER);
-    toggle(state.days,tk,id,on);save();render();
-    if(on){
-      if(Math.floor(totalXp()/PER)>oldLvl)toast('⬆️ LEVEL UP! Level '+(Math.floor(totalXp()/PER)+1));
-      else if(before<CLEAR&&count(tk)>=CLEAR)toast('🔥 Day cleared! Tuloy ang streak.');
-      else toast('+'+xpOf[id]+' XP ⚡');
+
+  $('todayLabel').textContent = '· ' + today.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'});
+
+  // Initialize Quests Logic
+  build(QUESTS, $('quests'), function(id, on) {
+    var before = count(tk), oldLvl = Math.floor(totalXp() / PER);
+    toggle(state.days, tk, id, on);
+    save();
+    render();
+    if(on) {
+      if(Math.floor(totalXp() / PER) > oldLvl) {
+        toast('🦇 RANK UP! ' + RANKS[Math.min(Math.floor(totalXp() / PER), RANKS.length - 1)]);
+      } else if(before < CLEAR && count(tk) >= CLEAR) {
+        toast('⚡ Day Cleared! Gotham is safe.');
+      } else {
+        toast('+' + xpOf[id] + ' XP ⚡');
+      }
     }
   });
-  build(BOSS,$('boss'),null,function(id,on){
-    var oldLvl=Math.floor(totalXp()/PER);
-    toggle(state.weeks,wk,id,on);save();render();
-    if(on){
-      if((state.weeks[wk]||[]).length===BOSS.length)toast('👹 Boss defeated! Solid linggo.');
-      else if(Math.floor(totalXp()/PER)>oldLvl)toast('⬆️ LEVEL UP!');
-      else toast('+'+bossXp[id]+' XP 🌃');
+
+  // Initialize Boss Logic
+  build(BOSS, $('boss'), function(id, on) {
+    var oldLvl = Math.floor(totalXp() / PER);
+    toggle(state.weeks, wk, id, on);
+    save();
+    render();
+    if(on) {
+      if((state.weeks[wk] || []).length === BOSS.length) {
+        toast('🏆 Arkham Boss Defeated! Elite Week.');
+      } else if(Math.floor(totalXp() / PER) > oldLvl) {
+        toast('🦇 RANK UP!');
+      } else {
+        toast('+' + bossXp[id] + ' XP 🌃');
+      }
     }
   });
-  var armed=false,rt;
-  $('reset').addEventListener('click',function(){
-    var b=$('reset');
-    if(!armed){armed=true;b.textContent='Pindutin ulit para burahin lahat';clearTimeout(rt);rt=setTimeout(function(){armed=false;b.textContent='Reset progress'},3000);return}
-    armed=false;b.textContent='Reset progress';state={days:{},weeks:{}};save();render();toast('Reset na. Fresh start. 🔄');
+
+  // Data Purge Reset Button
+  var armed = false, rt;
+  $('reset').addEventListener('click', function() {
+    var b = $('reset');
+    if(!armed) {
+      armed = true;
+      b.textContent = 'Click again to purge all data';
+      clearTimeout(rt);
+      rt = setTimeout(function(){ armed = false; b.textContent = 'Purge Protocol Data'; }, 3000);
+      return;
+    }
+    armed = false;
+    b.textContent = 'Purge Protocol Data';
+    state = {days:{}, weeks:{}};
+    save();
+    render();
+    toast('Data purged. Clean slate. 🔄');
   });
+
   render();
 })();
 </script>
-
-</body></html>
+</body>
+</html>
